@@ -57,6 +57,8 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
   '
 ```
 
+If running single host on a multihost machine, set by `export TPU_VISIBLE_CHIPS` first.
+
 ## Multi-Host (e.g., v6e-32)
 
 The full loop (environment setup, Ray cluster, inference) is handled automatically:
