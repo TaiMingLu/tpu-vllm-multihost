@@ -24,14 +24,13 @@ gcloud compute tpus tpu-vm describe ${TPU_NAME} \
 
 ## Single-Host (e.g., v6e-8)
 
-Setup environment and run inference:
+Setup environment (on all workers):
 
 ```bash
 gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
   --project=${PROJECT_ID} --zone=${ZONE} \
-  --worker=0 \
+  --worker=all \
   --command='
-    # Setup environment
     sudo apt-get update && sudo apt-get install -y python3.12 python3.12-venv git
     rm -rf ~/work-dir
     mkdir ~/work-dir
@@ -39,11 +38,21 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
     python3.12 -m venv vllm_env --symlinks
     source vllm_env/bin/activate
     pip install vllm-tpu ray[default]
+    python -c "import vllm; import tpu_inference; print(\"vLLM ready!\")"
+  '
+```
 
-    # Run inference
+Run inference (on worker 0):
+
+```bash
+gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
+  --project=${PROJECT_ID} --zone=${ZONE} \
+  --worker=0 \
+  --command='
     rm -rf ~/tpu-inference
     git clone https://github.com/TaiMingLu/tpu-vllm-multihost.git ~/tpu-inference
     cd ~/tpu-inference/quickstart
+    source ~/work-dir/vllm_env/bin/activate
     python basic_inference.py --tensor-parallel-size 8
   '
 ```
