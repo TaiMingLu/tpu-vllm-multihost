@@ -2,22 +2,25 @@
 set -euo pipefail
 
 # Simple launcher for multi-host TPU execution
-# Usage: ./run_multihost.sh <tpu-name> <tpu-type-or-chip-count> [inference-script]
+# Usage: ./run_multihost.sh <tpu-name> <tpu-type-or-chip-count> [model] [inference-script]
 # Example:
 #   ./run_multihost.sh my-v6e-32 v6e-32
-#   ./run_multihost.sh my-v6e-32 32 my_inference.py
+#   ./run_multihost.sh my-v6e-32 v6e-32 Qwen/Qwen2.5-72B-Instruct
+#   ./run_multihost.sh my-v6e-32 32 Qwen/Qwen2.5-72B-Instruct my_inference.py
 
 if [ $# -lt 2 ]; then
-    echo "Usage: $0 <tpu-name> <tpu-type-or-chip-count> [inference-script]"
+    echo "Usage: $0 <tpu-name> <tpu-type-or-chip-count> [model] [inference-script]"
     echo "Examples:"
-    echo "  $0 my-v6e-32 v6e-32                    # Uses basic_inference.py"
-    echo "  $0 my-v6e-32 32 my_inference.py        # Uses custom script"
+    echo "  $0 my-v6e-32 v6e-32                                      # Default model"
+    echo "  $0 my-v6e-32 v6e-32 Qwen/Qwen2.5-72B-Instruct            # Specify model"
+    echo "  $0 my-v6e-32 32 Qwen/Qwen2.5-72B-Instruct my_script.py   # Model + custom script"
     exit 1
 fi
 
 TPU_NAME=$1
 TPU_TYPE_OR_SIZE=$2
-INFERENCE_SCRIPT="${3:-basic_inference.py}"
+MODEL_PATH="${3:-${MODEL_PATH:-Qwen/Qwen2.5-72B-Instruct}}"
+INFERENCE_SCRIPT="${4:-basic_inference.py}"
 
 # Extract chip count if TPU type provided (e.g., "v6e-32" -> "32")
 if [[ "$TPU_TYPE_OR_SIZE" =~ ^v[0-9]+[a-z]*-([0-9]+)$ ]]; then
@@ -26,8 +29,6 @@ if [[ "$TPU_TYPE_OR_SIZE" =~ ^v[0-9]+[a-z]*-([0-9]+)$ ]]; then
 else
     TENSOR_PARALLEL_SIZE=$TPU_TYPE_OR_SIZE
 fi
-
-MODEL_PATH="${MODEL_PATH:-meta-llama/Llama-3.2-1B-Instruct}"
 
 echo "Running on TPU: ${TPU_NAME}"
 echo "Tensor parallel size: ${TENSOR_PARALLEL_SIZE}"

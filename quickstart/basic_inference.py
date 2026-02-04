@@ -7,7 +7,7 @@ from vllm import LLM, SamplingParams
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="meta-llama/Llama-3.2-1B-Instruct")
+    parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-0.5B-Instruct")
     parser.add_argument("--tensor-parallel-size", type=int, default=8)
     parser.add_argument("--max-model-len", type=int, default=2048)
     args = parser.parse_args()

@@ -76,7 +76,7 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
     rm -rf ~/tpu-inference
     git clone https://github.com/TaiMingLu/tpu-vllm-multihost.git ~/tpu-inference
     cd ~/tpu-inference/quickstart
-    ./run_multihost.sh '${TPU_NAME}' '${TPU_TYPE}'
+    ./run_multihost.sh '${TPU_NAME}' '${TPU_TYPE}' Qwen/Qwen2.5-72B-Instruct
   '
 ```
 
@@ -87,13 +87,18 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
 4. Worker 0 starts Ray head, other workers join
 5. Worker 0 runs inference with `TPU_MULTIHOST_BACKEND=ray`
 
+## Default Models
+
+- **Single-host**: `Qwen/Qwen2.5-0.5B-Instruct` (small, for testing)
+- **Multi-host**: `Qwen/Qwen2.5-72B-Instruct` (64 attention heads)
+
 ## Tensor Parallel Size
 
 | TPU Type | Chips | Single/Multi-Host |
 |----------|-------|-------------------|
-| v6e-8    | 4     | Single            |
-| v6e-16   | 8     | Multi             |
-| v6e-32   | 16    | Multi             |
+| v5e-8    | 8     | Single            |
+| v5e-16   | 16    | Multi             |
+| v5e-32   | 32    | Multi             |
 | v6e-8    | 8     | Single            |
 | v6e-16   | 16    | Multi             |
 | v6e-32   | 32    | Multi             |
@@ -101,15 +106,14 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
 ## Using a Different Model or Script
 
 ```bash
-# Single-host
-python basic_inference.py --model google/gemma-2b-it --tensor-parallel-size 8
+# Single-host - specify model
+python basic_inference.py --model Qwen/Qwen2.5-1.5B-Instruct --tensor-parallel-size 8
 
-# Multi-host - different model
-export MODEL_PATH="meta-llama/Llama-3.1-8B-Instruct"
-./run_multihost.sh ${TPU_NAME} ${TPU_TYPE}
+# Multi-host - specify model as 3rd argument
+./run_multihost.sh ${TPU_NAME} ${TPU_TYPE} Qwen/Qwen2.5-72B-Instruct
 
-# Multi-host - custom inference script
-./run_multihost.sh ${TPU_NAME} ${TPU_TYPE} my_inference.py
+# Multi-host - model + custom inference script
+./run_multihost.sh ${TPU_NAME} ${TPU_TYPE} Qwen/Qwen2.5-72B-Instruct my_inference.py
 ```
 
 ## Cleanup
