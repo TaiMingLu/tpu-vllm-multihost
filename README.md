@@ -69,7 +69,10 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
   --project=${PROJECT_ID} --zone=${ZONE} \
   --worker=0 \
   --command='
+    # Generate SSH key once (non-interactive)
+    ssh-keygen -t rsa -N "" -f ~/.ssh/google_compute_engine -q <<< y || true
     gcloud config set compute/zone '${ZONE}'
+
     rm -rf ~/tpu-inference
     git clone https://github.com/TaiMingLu/tpu-vllm-multihost.git ~/tpu-inference
     cd ~/tpu-inference/quickstart
@@ -88,6 +91,9 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
 
 | TPU Type | Chips | Single/Multi-Host |
 |----------|-------|-------------------|
+| v6e-8    | 4     | Single            |
+| v6e-16   | 8     | Multi             |
+| v6e-32   | 16    | Multi             |
 | v6e-8    | 8     | Single            |
 | v6e-16   | 16    | Multi             |
 | v6e-32   | 32    | Multi             |
