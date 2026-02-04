@@ -54,7 +54,7 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
     git clone https://github.com/TaiMingLu/tpu-vllm-multihost.git ~/tpu-inference
     cd ~/tpu-inference/quickstart
     source ~/work-dir/vllm_env/bin/activate
-    python basic_inference.py --tensor-parallel-size 8
+    python basic_inference.py --tensor-parallel-size 2
   '
 ```
 
@@ -76,7 +76,7 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
     rm -rf ~/tpu-inference
     git clone https://github.com/TaiMingLu/tpu-vllm-multihost.git ~/tpu-inference
     cd ~/tpu-inference/quickstart
-    ./run_multihost.sh '${TPU_NAME}' '${TPU_TYPE}' Qwen/Qwen2.5-72B-Instruct
+    ./run_multihost.sh '${TPU_NAME}' '${TPU_TYPE}' Qwen/Qwen3-8B-Base
   '
 ```
 
