@@ -15,10 +15,30 @@ export ZONE="your-zone"
 export TPU_TYPE="v6e-32"  # or v5e-16, etc.
 ```
 
-Verify your TPU is ready:
+## Request TPU (Queued Resource)
+
+Use the following commands to request a TPU via queued resources:
 
 ```bash
-gcloud compute tpus tpu-vm describe ${TPU_NAME} \
+# Create queued resource request
+# Runtime versions: v2-alpha-tpuv6e (v6e), tpu-ubuntu2204-base (v4)
+gcloud compute tpus queued-resources create ${TPU_NAME} \
+  --project=${PROJECT_ID} \
+  --zone=${ZONE} \
+  --accelerator-type=${TPU_TYPE} \
+  --runtime-version=tpu-ubuntu2204-base \
+  --node-id=${TPU_NAME} \
+  --spot
+
+# Verify your TPU is ready and check status (wait until ACTIVE)
+gcloud compute tpus queued-resources describe ${TPU_NAME} \
+  --project=${PROJECT_ID} --zone=${ZONE}
+```
+
+To delete the TPU when done:
+
+```bash
+gcloud compute tpus queued-resources delete ${TPU_NAME} \
   --project=${PROJECT_ID} --zone=${ZONE}
 ```
 
