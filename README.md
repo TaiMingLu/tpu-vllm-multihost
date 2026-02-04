@@ -15,6 +15,13 @@ export ZONE="your-zone"
 export TPU_TYPE="v6e-32"  # or v5e-16, etc.
 ```
 
+Verify your TPU is ready:
+
+```bash
+gcloud compute tpus tpu-vm describe ${TPU_NAME} \
+  --project=${PROJECT_ID} --zone=${ZONE}
+```
+
 ## Single-Host (e.g., v6e-8)
 
 Setup environment and run inference:
@@ -101,4 +108,3 @@ gcloud compute tpus tpu-vm ssh ${TPU_NAME} \
     sudo rm -f /tmp/libtpu_lockfile
   '
 ```
-# tpu-vllm-multihost
